@@ -1,4 +1,6 @@
 import 'package:flutter/material.dart';
+import 'package:jal_shakti/Groundwater%20Availability%20Estimation/groundwater_recharge.dart';
+import 'package:jal_shakti/map.dart';
 
 import 'DWLR/dwlr_station.dart';
 import 'Decision Support/decision_support.dart';
@@ -17,9 +19,10 @@ class _NavigationPageState extends State<NavigationPage> {
   int count = 0;
 
   final List<Widget> pages = [
+    MapPage(),
     DwlrStation(),
     GroundWaterLevel(),
-    AvailabilityScreen(),
+    GroundwaterRecharge(),
    //DecisionSupport(),
   ];
 
@@ -28,10 +31,11 @@ class _NavigationPageState extends State<NavigationPage> {
     return Scaffold(
       body: pages[count],
       bottomNavigationBar: BottomNavigationBar(
+        elevation: 10,
         type: BottomNavigationBarType.fixed,
-        backgroundColor: Colors.green,
+        backgroundColor:Color(0xFF00008B) ,
         currentIndex: count,
-        selectedItemColor: Colors.white,
+        selectedItemColor: Colors.blue,
         unselectedItemColor: Colors.white70,
         onTap: (index) {
           setState(() {
@@ -39,6 +43,10 @@ class _NavigationPageState extends State<NavigationPage> {
           });
         },
         items: const [
+          BottomNavigationBarItem(
+            icon: Icon(Icons.map_outlined),
+            label: "Map",
+          ),
           BottomNavigationBarItem(
             icon: Icon(Icons.water_drop_rounded),
             label: "DWLR",

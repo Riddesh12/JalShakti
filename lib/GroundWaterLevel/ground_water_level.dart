@@ -29,7 +29,11 @@ class _GroundWaterLevelState extends State<GroundWaterLevel> {
   TextEditingController(text: "CGWB"); // default
   final TextEditingController _startDate = TextEditingController();
   final TextEditingController _endDate = TextEditingController();
-
+  @override
+  void initState(){
+    super.initState();
+    _startDate.text="2025-09-01";
+  }
   String result = "";
   bool isLoading = false;
   List<Map<String, dynamic>> parsedData = [];
@@ -48,7 +52,44 @@ class _GroundWaterLevelState extends State<GroundWaterLevel> {
     "Karnataka": ["Bengaluru Urban", "Mysuru", "Belagavi"],
     "Kerala": ["Thiruvananthapuram", "Kochi", "Kozhikode"],
     "Madhya Pradesh": ["Bhopal", "Indore", "Jabalpur", "Gwalior"],
-    "Maharashtra": ["Mumbai", "Pune", "Nashik", "Solapur", "Nagpur"],
+    "Maharashtra": [
+      "Ahmednagar",
+      "Akola",
+      "Amravati",
+      "Aurangabad",
+      "Beed",
+      "Bhandara",
+      "Buldhana",
+      "Chandrapur",
+      "Dhule",
+      "Gadchiroli",
+      "Gondia",
+      "Hingoli",
+      "Jalgaon",
+      "Jalna",
+      "Kolhapur",
+      "Latur",
+      "Mumbai City",
+      "Mumbai Suburban",
+      "Nagpur",
+      "Nanded",
+      "Nandurbar",
+      "Nashik",
+      "Osmanabad",
+      "Palghar",
+      "Parbhani",
+      "Pune",
+      "Raigad",
+      "Ratnagiri",
+      "Sangli",
+      "Satara",
+      "Sindhudurg",
+      "Solapur",
+      "Thane",
+      "Wardha",
+      "Washim",
+      "Yavatmal"
+    ],
     "Manipur": ["Imphal", "Churachandpur"],
     "Meghalaya": ["Shillong", "Tura"],
     "Mizoram": ["Aizawl", "Lunglei"],
@@ -142,6 +183,19 @@ class _GroundWaterLevelState extends State<GroundWaterLevel> {
                     "wellDepth": item["wellDepth"],
                   };
                 }).toList();
+
+            // Sort the data by date (newest first)
+            parsedData.sort((a, b) {
+              try {
+                final dateA = DateTime.parse(a['date'] ?? '');
+                final dateB = DateTime.parse(b['date'] ?? '');
+                return dateB.compareTo(dateA); // Descending order (newest first)
+                // Use dateA.compareTo(dateB) for ascending order (oldest first)
+              } catch (e) {
+                return 0; // Keep original order if date parsing fails
+              }
+            });
+
           } catch (e) {
             parsedData = [];
             result = "Error parsing response: $e";
@@ -169,42 +223,151 @@ class _GroundWaterLevelState extends State<GroundWaterLevel> {
     }
 
     if (parsedData.isNotEmpty) {
+      final stationName = parsedData.first['stationName'] ?? "Unknown Station";
+      final districtName = parsedData.first['district'] ?? "-";
+      final wellDepth=parsedData.first['wellDepth']??"-";
+
       return Column(
-        children: parsedData.map((item) {
-          return Card(
-            elevation: 3,
-            margin: const EdgeInsets.symmetric(vertical: 8),
-            shape: RoundedRectangleBorder(
-              borderRadius: BorderRadius.circular(12),
+        crossAxisAlignment: CrossAxisAlignment.center,
+        children: [
+          // Header Section (shown only once)
+          Padding(
+            padding: const EdgeInsets.all(12.0),
+            child: Column(
+              children: [
+                Card(
+                  elevation: 4,
+                  margin: const EdgeInsets.all(12),
+                  shape: RoundedRectangleBorder(
+                    borderRadius: BorderRadius.circular(16),
+                  ),
+                  child: Padding(
+                    padding: const EdgeInsets.all(8.0),
+                    child: Column(
+                      children: [
+                        Row(
+                          mainAxisAlignment: MainAxisAlignment.center,
+                          children: [
+                            Text(
+                              "Station: $stationName",
+                              style: const TextStyle(
+                                fontSize: 20,
+                                fontWeight: FontWeight.w500,
+                                color: Colors.black,
+                              ),
+                            ),
+                          ],
+                        ),
+                        const SizedBox(height: 5),
+                        Row(
+                          mainAxisAlignment: MainAxisAlignment.center,
+                          children: [
+                            Text(
+                              "District: $districtName",
+                              style: const TextStyle(
+                                fontSize: 17,
+                                fontWeight: FontWeight.w500,
+                                color: Colors.black,
+                              ),
+                            ),
+                          ],
+                        ),
+                        SizedBox(height: 5,),
+                        Text("Well Depth: $wellDepth",
+                          style: TextStyle(
+                              fontSize: 17,
+                              fontWeight: FontWeight.w500,
+                              color: Colors.black
+                          ),)
+                      ],
+                    ),
+                  ),
+                )
+              ],
             ),
-            child: ListTile(
-              contentPadding: const EdgeInsets.all(12),
-              leading: CircleAvatar(
-                backgroundColor: Colors.blue.shade100,
-                child: const Icon(Icons.water_drop, color: Colors.blue),
+          ),
+
+          const Divider(thickness: 1),
+
+          // Add a sorting indicator
+
+
+          // Data Cards (date, level, well depth) - now sorted
+          ...parsedData.asMap().entries.map((entry) {
+            int index = entry.key;
+            Map<String, dynamic> item = entry.value;
+
+            // Format the date for better display
+// Format the date and time for display
+            String formattedDate = item['date'] ?? '-';
+            try {
+              final parsedDate = DateTime.parse(item['date'] ?? '');
+              formattedDate = DateFormat('dd MMM yyyy, hh:mm a').format(parsedDate);
+            } catch (e) {
+              formattedDate = item['date'] ?? '-';
+            }
+
+
+            return Card(
+              elevation: 3,
+              margin: const EdgeInsets.symmetric(vertical: 8, horizontal: 12),
+              shape: RoundedRectangleBorder(
+                borderRadius: BorderRadius.circular(12),
               ),
-              title: Text(
-                item['stationName'] ?? "Unknown Station",
-                style:
-                const TextStyle(fontWeight: FontWeight.bold, fontSize: 16),
+              child: ListTile(
+                contentPadding: const EdgeInsets.all(12),
+                leading: CircleAvatar(
+                  backgroundColor: Colors.blue.shade100,
+                  child: Text(
+                    '${index + 1}',
+                    style: TextStyle(
+                      color: Colors.blue,
+                      fontWeight: FontWeight.bold,
+                    ),
+                  ),
+                ),
+                title: Text(
+                  "Date: $formattedDate",
+                  style: TextStyle(fontWeight: FontWeight.bold),
+                ),
+                subtitle: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    const SizedBox(height: 6),
+                    Row(
+                      children: [
+                        Icon(Icons.water_drop, size: 16, color: Colors.blue),
+                        SizedBox(width: 4),
+                        Text(
+                          "Level: ${item['level'] ?? '-'} ${item['unit'] ?? ''}",
+                          style: TextStyle(
+                            fontWeight: FontWeight.w500,
+                            color: Colors.blue[700],
+                          ),
+                        ),
+                      ],
+                    ),
+                  ],
+                ),
+                // trailing: Container(
+                //   padding: EdgeInsets.symmetric(horizontal: 8, vertical: 4),
+                //   decoration: BoxDecoration(
+                //     color: Colors.green.shade50,
+                //     borderRadius: BorderRadius.circular(8),
+                //     border: Border.all(color: Colors.green.shade200),
+                //   ),
+                //   child: Text(
+                //     '${item['level'] ?? '-'}',
+                //     style: TextStyle(
+                //       fontWeight: FontWeight.bold,
+                //       color: Colors.green[700],
+                //     ),
+                //   ),
+                // ),
               ),
-              subtitle: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  const SizedBox(height: 8),
-                  Text("District: ${item['district'] ?? '-'}"),
-                  const SizedBox(height: 8),
-                  Text("Date: ${item['date'] ?? '-'}"),
-                  const SizedBox(height: 8),
-                  Text(
-                      "Level: ${item['level'] ?? '-'} ${item['unit'] ?? ''}"),
-                  const SizedBox(height: 8),
-                  Text("Well Depth: ${item['wellDepth'] ?? '-'}"),
-                ],
-              ),
-            ),
-          );
-        }).toList(),
+            );
+          }).toList(),
+        ],
       );
     }
 
@@ -275,8 +438,25 @@ class _GroundWaterLevelState extends State<GroundWaterLevel> {
             ),
           pw.SizedBox(height: 20),
 
-          // Add cards data
-          ...parsedData.map((item) {
+          // Add note about sorting
+          pw.Text("Data sorted by date (newest first)",
+              style: pw.TextStyle(fontSize: 12, fontStyle: pw.FontStyle.italic)),
+          pw.SizedBox(height: 10),
+
+          // Add cards data (sorted)
+          ...parsedData.asMap().entries.map((entry) {
+            int index = entry.key;
+            Map<String, dynamic> item = entry.value;
+
+            String formattedDate = item['date'] ?? '-';
+            try {
+              final parsedDate = DateTime.parse(item['date'] ?? '');
+              formattedDate = DateFormat('dd MMM yyyy, hh:mm a').format(parsedDate);
+
+            } catch (e) {
+              formattedDate = item['date'] ?? '-';
+            }
+
             return pw.Container(
               margin: const pw.EdgeInsets.only(bottom: 10),
               padding: const pw.EdgeInsets.all(10),
@@ -287,9 +467,9 @@ class _GroundWaterLevelState extends State<GroundWaterLevel> {
               child: pw.Column(
                 crossAxisAlignment: pw.CrossAxisAlignment.start,
                 children: [
-                  pw.Text("Station: ${item['stationName'] ?? '-'}"),
+                  pw.Text("${index + 1}. Station: ${item['stationName'] ?? '-'}"),
                   pw.Text("District: ${item['district'] ?? '-'}"),
-                  pw.Text("Date: ${item['date'] ?? '-'}"),
+                  pw.Text("Date: $formattedDate"),
                   pw.Text(
                       "Level: ${item['level'] ?? '-'} ${item['unit'] ?? ''}"),
                   pw.Text("Well Depth: ${item['wellDepth'] ?? '-'}"),
@@ -322,181 +502,225 @@ class _GroundWaterLevelState extends State<GroundWaterLevel> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
+        leading: Image.asset("Assets/jalshakti.png"),
+        backgroundColor: Color(0xFF00008B),
         title: const Text(
           "Ground Water Level",
-          style: TextStyle(fontWeight: FontWeight.bold),
+          style: TextStyle(fontWeight: FontWeight.w500,color: Colors.white),
         ),
         centerTitle: true,
         automaticallyImplyLeading: false,
       ),
-      body: ListView(
-        padding: const EdgeInsets.all(12),
-        children: [
-          // State dropdown
-          DropdownButtonFormField<String>(
-            decoration: InputDecoration(
-              hintText: "State",
-              border: OutlineInputBorder(
-                borderRadius: BorderRadius.circular(10),
-              ),
-              contentPadding:
-              const EdgeInsets.symmetric(horizontal: 10, vertical: 12),
-            ),
-            isExpanded: true,
-            value: selectedState,
-            items: stateDistricts.keys.map((state) {
-              return DropdownMenuItem<String>(
-                value: state,
-                child: Text(
-                  state,
-                  overflow: TextOverflow.ellipsis,
-                  maxLines: 1,
+      body: SingleChildScrollView(
+        child: Padding(
+          padding: EdgeInsets.all(10),
+          child: Column(
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: [
+              // State dropdown
+              Align(alignment: Alignment.topLeft,child: Text("State:",style: TextStyle(fontWeight: FontWeight.bold),)),
+              SizedBox(height: 3,),
+              DropdownButtonFormField<String>(
+                decoration: InputDecoration(
+                  hintText: "State",
+                  border: OutlineInputBorder(
+                    borderRadius: BorderRadius.circular(10),
+                  ),
+                  contentPadding:
+                  const EdgeInsets.symmetric(horizontal: 10, vertical: 12),
                 ),
-              );
-            }).toList(),
-            onChanged: (value) {
-              setState(() {
-                selectedState = value;
-                selectedDistrict = null; // reset district
-                _stateController.text = value ?? "";
-              });
-            },
-          ),
-          const SizedBox(height: 10),
-
-          // District dropdown
-          DropdownButtonFormField<String>(
-            decoration: InputDecoration(
-              hintText: "District",
-              border: OutlineInputBorder(
-                borderRadius: BorderRadius.circular(10),
+                isExpanded: true,
+                value: selectedState,
+                items: stateDistricts.keys.map((state) {
+                  return DropdownMenuItem<String>(
+                    value: state,
+                    child: Text(
+                      state,
+                      overflow: TextOverflow.ellipsis,
+                      maxLines: 1,
+                    ),
+                  );
+                }).toList(),
+                onChanged: (value) {
+                  setState(() {
+                    selectedState = value;
+                    selectedDistrict = null; // reset district
+                    _stateController.text = value ?? "";
+                  });
+                },
               ),
-            ),
-            value: selectedDistrict,
-            items: (selectedState != null
-                ? stateDistricts[selectedState] ?? []
-                : [])
-                .map((district) {
-              return DropdownMenuItem<String>(
-                value: district,
-                child: Text(district),
-              );
-            }).toList(),
-            onChanged: (value) {
-              setState(() {
-                selectedDistrict = value;
-                _districtController.text = value ?? "";
-              });
-            },
-          ),
-          const SizedBox(height: 10),
+              const SizedBox(height: 10),
 
-          // Start Date
-          TextFormField(
-            controller: _startDate,
-            decoration: InputDecoration(
-              labelText: "Start Date",
-              border: OutlineInputBorder(
-                borderRadius: BorderRadius.circular(10),
-              ),
-            ),
-            readOnly: true,
-            onTap: () => _selectDate(context, _startDate),
-          ),
-          const SizedBox(height: 10),
-
-          // End Date
-          TextFormField(
-            controller: _endDate,
-            decoration: InputDecoration(
-              labelText: "End Date",
-              border: OutlineInputBorder(
-                borderRadius: BorderRadius.circular(10),
-              ),
-            ),
-            readOnly: true,
-            onTap: () => _selectDate(context, _endDate),
-          ),
-          const SizedBox(height: 20),
-
-          // Fetch button
-          ElevatedButton.icon(
-            onPressed: fetchGroundWaterData,
-            icon: const Icon(Icons.search),
-            label: const Text("Fetch"),
-            style: ElevatedButton.styleFrom(
-              minimumSize: const Size(double.infinity, 50),
-              shape: RoundedRectangleBorder(
-                borderRadius: BorderRadius.circular(10),
-              ),
-            ),
-          ),
-          const SizedBox(height: 10),
-
-          // Graph button
-          ElevatedButton.icon(
-            onPressed: parsedData.isNotEmpty
-                ? () {
-              final List<FlSpot> spots = [];
-              final List<DateTime> dates = [];
-
-              for (int i = 0; i < parsedData.length; i++) {
-                final item = parsedData[i];
-                final dateStr = item['date'];
-                final level =
-                double.tryParse(item['level']?.toString() ?? '');
-
-                if (dateStr != null && level != null) {
-                  try {
-                    final parsedDate = DateTime.parse(dateStr);
-                    dates.add(parsedDate);
-                    spots.add(FlSpot(i.toDouble(), level));
-                  } catch (_) {}
-                }
-              }
-
-              Navigator.push(
-                context,
-                MaterialPageRoute(
-                  builder: (_) => GraphPage(
-                     key: _graphKey,
-                    spots: spots,
-                    dates: dates, graphKey: _graphKey,
+              // District dropdown
+              Align(alignment: Alignment.topLeft,child: Text("District:",style: TextStyle(fontWeight: FontWeight.bold),)),
+              SizedBox(height: 3,),
+              DropdownButtonFormField<String>(
+                decoration: InputDecoration(
+                  hintText: "District",
+                  border: OutlineInputBorder(
+                    borderRadius: BorderRadius.circular(10),
                   ),
                 ),
-              );
-            }
-                : null,
-            icon: const Icon(Icons.show_chart),
-            label: const Text("Show Graph"),
-            style: ElevatedButton.styleFrom(
-              minimumSize: const Size(double.infinity, 50),
-              backgroundColor: Colors.green,
-              shape: RoundedRectangleBorder(
-                borderRadius: BorderRadius.circular(10),
+                value: selectedDistrict,
+                items: (selectedState != null
+                    ? stateDistricts[selectedState] ?? []
+                    : [])
+                    .map((district) {
+                  return DropdownMenuItem<String>(
+                    value: district,
+                    child: Text(district),
+                  );
+                }).toList(),
+                onChanged: (value) {
+                  setState(() {
+                    selectedDistrict = value;
+                    _districtController.text = value ?? "";
+                  });
+                },
               ),
-            ),
-          ),
-          const SizedBox(height: 10),
+              const SizedBox(height: 10),
 
-          // PDF button
-          ElevatedButton.icon(
-            onPressed: parsedData.isNotEmpty ? _generatePdfWithGraph : null,
-            icon: const Icon(Icons.picture_as_pdf),
-            label: const Text("Generate PDF"),
-            style: ElevatedButton.styleFrom(
-              minimumSize: const Size(double.infinity, 50),
-              backgroundColor: Colors.orange,
-              shape: RoundedRectangleBorder(
-                borderRadius: BorderRadius.circular(10),
+              // Start Date
+              Align(alignment: Alignment.topLeft,child: Text("Start Date & End Date:",style: TextStyle(fontWeight: FontWeight.bold),)),
+              SizedBox(height: 5,),
+              Center(
+                child: Row(
+                  children: [
+                    Container(
+                      width: 120,
+                      child: TextFormField(
+                        controller: _startDate,
+                        decoration: InputDecoration(
+                          hintText: "Start Date",
+                          border: OutlineInputBorder(
+                            borderRadius: BorderRadius.circular(10),
+                          ),
+                        ),
+                        readOnly: true,
+                        onTap: () => _selectDate(context, _startDate),
+                      ),
+                    ),
+                    SizedBox(width: 50,),
+                    Container(
+                      width: 120,
+                      child: TextFormField(
+                        controller: _endDate,
+                        decoration: InputDecoration(
+                          hintText: "End Date",
+                          border: OutlineInputBorder(
+                            borderRadius: BorderRadius.circular(10),
+                          ),
+                        ),
+                        readOnly: true,
+                        onTap: () => _selectDate(context, _endDate),
+                      ),
+                    ),
+                  ],
+                ),
               ),
-            ),
-          ),
-          const SizedBox(height: 20),
+              const SizedBox(height: 20),
+              SingleChildScrollView(
+                scrollDirection: Axis.vertical,
+                child: Row(
+                  children: [
+                    Expanded(
+                      child: ElevatedButton.icon(
+                        onPressed: (_stateController.text.isEmpty || _districtController.text.isEmpty || _startDate.text.isEmpty || _endDate.text.isEmpty)?
+                        null:fetchGroundWaterData,
+                        icon: const Icon(Icons.search),
+                        label: const Text("Fetch"),
+                        style: ElevatedButton.styleFrom(
+                          backgroundColor: Colors.grey[300],
+                          minimumSize: const Size(0, 50), // only control height
+                          shape: RoundedRectangleBorder(
+                            borderRadius: BorderRadius.circular(10),
+                          ),
+                        ),
+                      ),
+                    ),
+                    const SizedBox(width: 10),
+                    Expanded(
+                      child: ElevatedButton.icon(
+                        onPressed: parsedData.isNotEmpty
+                            ? () {
+                          final List<FlSpot> spots = [];
+                          final List<DateTime> dates = [];
 
-          // Result view
-          _buildResultView(),
-        ],
+                          // Sort data chronologically for graph (oldest first for proper line graph)
+                          List<Map<String, dynamic>> sortedForGraph = List.from(parsedData);
+                          sortedForGraph.sort((a, b) {
+                            try {
+                              final dateA = DateTime.parse(a['date'] ?? '');
+                              final dateB = DateTime.parse(b['date'] ?? '');
+                              return dateA.compareTo(dateB); // Ascending order for graph
+                            } catch (e) {
+                              return 0;
+                            }
+                          });
+
+                          for (int i = 0; i < sortedForGraph.length; i++) {
+                            final item = sortedForGraph[i];
+                            final dateStr = item['date'];
+                            final level =
+                            double.tryParse(item['level']?.toString() ?? '');
+
+                            if (dateStr != null && level != null) {
+                              try {
+                                final parsedDate = DateTime.parse(dateStr);
+                                dates.add(parsedDate);
+                                spots.add(FlSpot(i.toDouble(), level));
+                              } catch (_) {}
+                            }
+                          }
+
+                          Navigator.push(
+                            context,
+                            MaterialPageRoute(
+                              builder: (_) => GraphPage(
+                                key: _graphKey,
+                                spots: spots,
+                                dates: dates,
+                                graphKey: _graphKey, cityName: '${_districtController.text}',
+                              ),
+                            ),
+                          );
+                        }
+                            : null,
+                        icon: const Icon(Icons.show_chart),
+                        label: const Text("Show Graph"),
+                        style: ElevatedButton.styleFrom(
+                          minimumSize: const Size(0, 50),
+                          backgroundColor: Colors.green,
+                          shape: RoundedRectangleBorder(
+                            borderRadius: BorderRadius.circular(10),
+                          ),
+                        ),
+                      ),
+                    ),
+                    const SizedBox(width: 10),
+                    Expanded(
+                      child: ElevatedButton.icon(
+                        onPressed: parsedData.isNotEmpty ? _generatePdfWithGraph : null,
+                        label: const Text("Generate PDF"),
+                        style: ElevatedButton.styleFrom(
+                          minimumSize: const Size(20, 50),
+                          backgroundColor: Colors.orange,
+                          shape: RoundedRectangleBorder(
+                            borderRadius: BorderRadius.circular(10),
+                          ),
+                        ),
+                      ),
+                    ),
+                  ],
+                ),
+              ),
+
+              // Result view
+              _buildResultView(),
+
+            ],
+          ),
+        ),
       ),
     );
   }

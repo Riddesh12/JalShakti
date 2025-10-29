@@ -8,7 +8,7 @@ class GraphPage extends StatefulWidget {
   final List<DateTime> dates;
   final GlobalKey graphKey; // Add this key to capture chart
 
-  const GraphPage({super.key, required this.spots, required this.dates, required this.graphKey});
+  const GraphPage({super.key, required this.spots, required this.dates, required this.graphKey, required String cityName});
 
   @override
   State<GraphPage> createState() => _GraphPageState();
@@ -20,7 +20,6 @@ class _GraphPageState extends State<GraphPage> {
   @override
   void initState() {
     super.initState();
-    // Force landscape orientation when page is loaded
     SystemChrome.setPreferredOrientations([
       DeviceOrientation.landscapeLeft,
       DeviceOrientation.landscapeRight,

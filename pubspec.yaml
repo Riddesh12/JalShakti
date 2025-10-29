@@ -37,7 +37,7 @@ dependencies:
   # Use with the CupertinoIcons class for iOS style icons.
   cupertino_icons: ^1.0.8
   intl: ^0.20.2
-  http: ^1.2.2
+  http: ^1.5.0
   html: ^0.15.4
   pdf: ^3.11.3
   permission_handler: ^12.0.1
@@ -45,8 +45,14 @@ dependencies:
   flutter_pdfview: ^1.4.1+1
   printing: ^5.14.2
   open_filex: ^4.4.0
-  vector_math: ^2.1.4
-  arcgis_map_sdk: ^0.8.0
+  flutter_map: ^6.0.0
+  latlong2: ^0.9.1
+  flutter_map_geojson: ^1.0.8
+  flutter_map_marker_popup: ^6.1.1
+  liquid_progress_indicator: ^0.4.0
+
+
+
 dev_dependencies:
   flutter_test:
     sdk: flutter

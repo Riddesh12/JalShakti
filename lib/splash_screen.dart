@@ -1,6 +1,8 @@
-import 'dart:async';
+import'dart:async';
 import 'package:flutter/material.dart';
+import 'package:jal_shakti/signup_page.dart';
 import 'login_page.dart';
+
 class SplashScreen extends StatefulWidget {
   const SplashScreen({super.key});
 
@@ -9,9 +11,11 @@ class SplashScreen extends StatefulWidget {
 }
 
 class _SplashScreenState extends State<SplashScreen> {
+  @override
   void initState(){
-    Timer(Duration(seconds: 4),(){
-Navigator.pushReplacement(context, MaterialPageRoute(builder: (_)=>LoginPage()));
+    super.initState();
+    Timer(Duration(seconds: 3),(){
+      Navigator.pushReplacement(context, MaterialPageRoute(builder: (_)=>SignupPage()));
     });
   }
   @override
@@ -21,33 +25,23 @@ Navigator.pushReplacement(context, MaterialPageRoute(builder: (_)=>LoginPage()))
         width: double.infinity,
         height: double.infinity,
         decoration: BoxDecoration(
-          gradient: LinearGradient(colors: [Color(0xFF0f9b0f), Color(0xFF38ef7d)], // groundwater theme
+          gradient: LinearGradient(colors: [Color(0xFF00008B), Colors.black], // groundwater theme
             begin: Alignment.topLeft,
             end: Alignment.bottomRight,)
         ),
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
-            CircleAvatar(
-              radius: 60,
-              backgroundColor: Colors.white,
-              child: Padding(padding: EdgeInsets.all(12),
-                child: Image.asset("Assets/jalshakti.png"),
-              ),
-            ),
-            SizedBox(height: 20,),
-            Text("Jal Shakti Innovators",
-              style: TextStyle(fontSize: 26,
-                  fontWeight: FontWeight.bold,
-                  color: Colors.white,
-                  letterSpacing: 1.2),),
-            SizedBox(height: 15,),
+          Center(
+            child: Image.asset("Assets/jalshakti.png",height: 220,),
+          ),
+
             const Text(
               "Groundwater Monitoring System",
               style: TextStyle(
                 fontSize: 20,
                 color: Colors.white70,
-                fontWeight: FontWeight.w400,
+                fontWeight: FontWeight.bold,
               ),
             ),
             SizedBox(height: 20,),

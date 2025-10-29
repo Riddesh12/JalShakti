@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:jal_shakti/navigation_page.dart';
+import 'package:jal_shakti/signup_page.dart';
 
 class LoginPage extends StatefulWidget {
   const LoginPage({super.key});
@@ -20,8 +21,8 @@ class _LoginPageState extends State<LoginPage> {
         width: double.infinity,
         height: double.infinity,
         decoration: const BoxDecoration(
-          gradient: LinearGradient(
-            colors: [Color(0xFF0f9b0f), Color(0xFF38ef7d)], // greenish-water blend
+          gradient: LinearGradient(colors: [Color(0xFF00008B), Colors.black], // groundwater theme
+            // greenish-water blend
             begin: Alignment.topLeft,
             end: Alignment.bottomRight,
           ),
@@ -33,16 +34,9 @@ class _LoginPageState extends State<LoginPage> {
               child: Column(
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: [
-                  // Logo
-                  CircleAvatar(
-                    radius: 50,
-                    backgroundColor: Colors.white,
-                    child: Padding(
-                      padding: const EdgeInsets.all(8.0),
-                      child: Image.asset("Assets/jalshakti.png"),
+                  Center(
+                      child: Image.asset("Assets/jalshakti.png",height: 220,),
                     ),
-                  ),
-                  const SizedBox(height: 20),
 
                   // Title
                   const Text(
@@ -155,7 +149,10 @@ class _LoginPageState extends State<LoginPage> {
                       "Forgot Password?",
                       style: TextStyle(color: Colors.white70),
                     ),
-                  )
+                  ),
+                  SizedBox(height: 5,),
+                TextButton(onPressed: (){Navigator.push(context, MaterialPageRoute(builder: (_)=>SignupPage()));},
+                    child: Text("New User? Signup",style: TextStyle(fontSize: 15,fontWeight: FontWeight.bold, color: Colors.white),))
                 ],
               ),
             ),
