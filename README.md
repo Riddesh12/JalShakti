@@ -14,7 +14,7 @@ Download and explore the application with real DWLR-based visualizations and ana
 
 👉 🔗 APK Download Link (Highlighted):
 
-⬇️ Download APK
+⬇️ Download APK :- **https://drive.google.com/file/d/1gbBjDt0EmW91vWkN2AkXE2ey5sBFWqwL/view?usp=sharing**
 
 📱 Note: Enable “Install from Unknown Sources” on your Android device if prompted.
 ---
@@ -131,4 +131,5 @@ The platform provides **visual analytics**, **predictive insights**, and **decis
 ---
 
 ### 💭 Sustainable groundwater management starts with real-time data and informed action.
+
 
