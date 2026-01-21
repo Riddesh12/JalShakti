@@ -7,7 +7,16 @@
 **Department:** Central Ground Water Board (CGWB)
 
 **Domain:** Water Resource Management
+APK Download (Live Demo)
 
+🚀 Try the Real-time Groundwater Resource Evaluation App
+Download and explore the application with real DWLR-based visualizations and analytics.
+
+👉 🔗 APK Download Link (Highlighted):
+
+⬇️ Download APK
+
+📱 Note: Enable “Install from Unknown Sources” on your Android device if prompted.
 ---
 
 ## 🧠 Overview
@@ -122,3 +131,4 @@ The platform provides **visual analytics**, **predictive insights**, and **decis
 ---
 
 ### 💭 Sustainable groundwater management starts with real-time data and informed action.
+
